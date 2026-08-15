@@ -36,26 +36,18 @@ list(APPEND CMAKE_FIND_ROOT_PATH "${PREBUILT_DIR}/boost/${ANDROID_ABI}/lib/cmake
 find_package(Boost 1.87.0 REQUIRED COMPONENTS iostreams CONFIG)
 add_compile_definitions("BOOST_ALL_NO_EMBEDDED_GDB_SCRIPTS")
 
-# prebuilt marisa-tire, OpenCC needs it
-set(marisa_DIR "${PREBUILT_DIR}/marisa/${ANDROID_ABI}/lib/cmake/marisa")
-find_package(marisa QUIET)
-if(NOT marisa_FOUND)
-  # Create a mock marisa target if not found
-  add_library(Marisa::marisa INTERFACE IMPORTED)
-endif()
-
-# prebuilt opencc
-set(OpenCC_DIR "${PREBUILT_DIR}/opencc/${ANDROID_ABI}/lib/cmake/opencc")
-set(OPENCC_ENABLE_MARISA OFF)
-find_package(OpenCC REQUIRED CONFIG)
+# Skip OpenCC/Marisa as they have missing dependencies in prebuilt
+# The prebuilt OpenCC was compiled with Marisa support but Marisa lib is missing
+# This causes linker errors. We disable OpenCC to work around this.
+set(ENABLE_CLOUDPINYIN OFF CACHE BOOL "" FORCE)
 
 option(ENABLE_TEST "" OFF)
 option(ENABLE_GUI "" OFF)
 option(ENABLE_BROWSER "" OFF)
 option(USE_WEBKIT "" OFF)
 option(ENABLE_CLOUDPINYIN "" OFF)
-# prefer OpenCC_DIR rather than fcitx5-chinese-addons/cmake/FindOpenCC.cmake
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+
 add_subdirectory(fcitx5-chinese-addons)
 # rename to include executable in apk
 set_target_properties(scel2org5 PROPERTIES OUTPUT_NAME libscel2org5.so)
