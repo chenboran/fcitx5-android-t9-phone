@@ -17,7 +17,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive
+          # 不使用递归子模块，而是分步骤处理
+          submodules: false
+
+      - name: Initialize Git submodules
+        run: |
+          git config --global --add safe.directory '*'
+          git submodule update --init --depth 1
+          # 对于嵌套的子模块，分别初始化避免浅克隆冲突
+          git submodule foreach git submodule update --init --depth 1
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
