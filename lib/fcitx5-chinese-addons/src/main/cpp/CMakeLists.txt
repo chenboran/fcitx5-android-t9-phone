@@ -40,17 +40,13 @@ add_compile_definitions("BOOST_ALL_NO_EMBEDDED_GDB_SCRIPTS")
 set(marisa_DIR "${PREBUILT_DIR}/marisa/${ANDROID_ABI}/lib/cmake/marisa")
 find_package(marisa QUIET)
 if(NOT marisa_FOUND)
-  # Create mock target and add the library directly if needed
+  # Create a mock marisa target if not found
   add_library(Marisa::marisa INTERFACE IMPORTED)
-  # Try to find marisa library file directly
-  find_library(MARISA_LIB marisa PATHS "${PREBUILT_DIR}/marisa/${ANDROID_ABI}/lib" NO_DEFAULT_PATH)
-  if(MARISA_LIB)
-    target_link_libraries(Marisa::marisa INTERFACE "${MARISA_LIB}")
-  endif()
 endif()
 
 # prebuilt opencc
 set(OpenCC_DIR "${PREBUILT_DIR}/opencc/${ANDROID_ABI}/lib/cmake/opencc")
+set(OPENCC_ENABLE_MARISA OFF)
 find_package(OpenCC REQUIRED CONFIG)
 
 option(ENABLE_TEST "" OFF)
