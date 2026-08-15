@@ -38,11 +38,15 @@ add_compile_definitions("BOOST_ALL_NO_EMBEDDED_GDB_SCRIPTS")
 
 # prebuilt marisa-tire, OpenCC needs it
 set(marisa_DIR "${PREBUILT_DIR}/marisa/${ANDROID_ABI}/lib/cmake/marisa")
-find_package(marisa  QUIET)
+find_package(marisa QUIET)
+if(NOT marisa_FOUND)
+  # Create a mock marisa target if not found
+  add_library(Marisa::marisa INTERFACE IMPORTED)
+endif()
 
 # prebuilt opencc
 set(OpenCC_DIR "${PREBUILT_DIR}/opencc/${ANDROID_ABI}/lib/cmake/opencc")
-find_package(OpenCC  QUIET)
+find_package(OpenCC REQUIRED CONFIG)
 
 option(ENABLE_TEST "" OFF)
 option(ENABLE_GUI "" OFF)
